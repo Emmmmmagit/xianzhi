@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>校园闲置物品流换平台</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header" id="header">
+            <div class="header-content">
+                <h1>闲置流转</h1>
+                <button class="search-btn" onclick="showSearch()">搜索</button>
+            </div>
+        </header>
+
+        <main class="main-content" id="mainContent">
+            <div class="page" id="homePage">
+                <section class="banner">
+                    <h2 class="slogan">让闲置物品找到新主人<br>校园环保从你我开始</h2>
+                    <p class="sub-slogan">免费发布 · 便捷交换 · 环保校园</p>
+                </section>
+
+                <section class="categories">
+                    <h3 class="section-title">物品分类</h3>
+                    <div class="category-grid">
+                        <div class="category-item" onclick="goToCategory('books')">
+                            <div class="category-icon">📚</div>
+                            <span>书籍</span>
+                        </div>
+                        <div class="category-item" onclick="goToCategory('clothing')">
+                            <div class="category-icon">👕</div>
+                            <span>服饰</span>
+                        </div>
+                        <div class="category-item" onclick="goToCategory('digital')">
+                            <div class="category-icon">📱</div>
+                            <span>数码</span>
+                        </div>
+                        <div class="category-item" onclick="goToCategory('daily')">
+                            <div class="category-icon">🏠</div>
+                            <span>生活用品</span>
+                        </div>
+                        <div class="category-item" onclick="goToCategory('sports')">
+                            <div class="category-icon">⚽</div>
+                            <span>体育器材</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="hot-items">
+                    <h3 class="section-title">热门闲置推荐</h3>
+                    <div class="items-grid" id="hotItemsList"></div>
+                </section>
+
+                <section class="exchange-banner" onclick="goToExchange()">
+                    <div class="exchange-content">
+                        <span class="exchange-icon">🔄</span>
+                        <div class="exchange-text">
+                            <h4>以物换物专区</h4>
+                            <p>用你的闲置换取所需</p>
+                        </div>
+                        <span class="arrow">></span>
+                    </div>
+                </section>
+            </div>
+
+            <div class="page" id="categoryPage" style="display:none;">
+                <div class="page-header">
+                    <button class="back-btn" onclick="goBack()">返回</button>
+                    <h2 class="page-title" id="categoryTitle">分类</h2>
+                </div>
+                <div class="category-filter">
+                    <span class="filter-tag active">全部</span>
+                    <span class="filter-tag">可议价</span>
+                    <span class="filter-tag">全新</span>
+                    <span class="filter-tag">二手</span>
+                </div>
+                <div class="items-grid" id="categoryItemsList"></div>
+            </div>
+
+            <div class="page" id="publishPage" style="display:none;">
+                <div class="page-header">
+                    <button class="back-btn" onclick="goBack()">返回</button>
+                    <h2 class="page-title">发布闲置</h2>
+                </div>
+                <div class="publish-form">
+                    <div class="upload-area" id="uploadArea" onclick="triggerUpload()">
+                        <div class="upload-icon">+</div>
+                        <p>点击上传图片</p>
+                        <p class="upload-tip">最多上传9张图片</p>
+                    </div>
+                    <input type="file" id="imageUpload" multiple accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+
+                    <div class="form-group">
+                        <label>物品名称</label>
+                        <input type="text" id="itemName" placeholder="请输入物品名称">
+                    </div>
+
+                    <div class="form-group">
+                        <label>价格（元）</label>
+                        <input type="number" id="itemPrice" placeholder="请输入价格">
+                    </div>
+
+                    <div class="form-group">
+                        <label>分类</label>
+                        <select id="itemCategory">
+                            <option value="">请选择分类</option>
+                            <option value="books">书籍</option>
+                            <option value="clothing">服饰</option>
+                            <option value="digital">数码</option>
+                            <option value="daily">生活用品</option>
+                            <option value="sports">体育器材</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>新旧程度</label>
+                        <select id="itemCondition">
+                            <option value="new">全新</option>
+                            <option value="like-new">几乎全新</option>
+                            <option value="good">较好</option>
+                            <option value="fair">一般</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>年级</label>
+                        <input type="text" id="itemGrade" placeholder="如：大二">
+                    </div>
+
+                    <div class="form-group">
+                        <label>宿舍</label>
+                        <input type="text" id="itemDorm" placeholder="如：5号楼301">
+                    </div>
+
+                    <div class="form-group">
+                        <label>物品描述</label>
+                        <textarea id="itemDesc" placeholder="请详细描述物品的品牌、型号、使用情况等"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>是否换物</label>
+                        <label class="switch">
+                            <input type="checkbox" id="canExchange">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-label">可“以物换物”</span>
+                    </div>
+
+                    <button class="publish-btn" onclick="submitPublish()">发布</button>
+                </div>
+            </div>
+
+            <div class="page" id="detailPage" style="display:none;">
+                <div class="page-header">
+                    <button class="back-btn" onclick="goBack()">返回</button>
+                    <h2 class="page-title">好物详情</h2>
+                </div>
+                <div class="detail-content" id="detailContent"></div>
+            </div>
+
+            <div class="page" id="profilePage" style="display:none;">
+                <div class="page-header">
+                    <button class="back-btn" onclick="goBack()">返回</button>
+                    <h2 class="page-title">个人中心</h2>
+                </div>
+                <div class="profile-header">
+                    <div class="avatar">头像</div>
+                    <div class="profile-info">
+                        <h3 id="userName">校园用户</h3>
+                        <p>ID: <span id="userId">2024001</span></p>
+                    </div>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-num" id="publishCount">0</span>
+                        <span class="stat-label">发布</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num" id="favoriteCount">0</span>
+                        <span class="stat-label">收藏</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num" id="messageCount">0</span>
+                        <span class="stat-label">消息</span>
+                    </div>
+                </div>
+
+                <div class="profile-menu">
+                    <div class="menu-item" onclick="showMyPublish()">
+                        <span class="menu-icon">📦</span>
+                        <span>我的发布</span>
+                        <span class="arrow">></span>
+                    </div>
+                    <div class="menu-item" onclick="showMyFavorites()">
+                        <span class="menu-icon">❤️</span>
+                        <span>我的收藏</span>
+                        <span class="arrow">></span>
+                    </div>
+                    <div class="menu-item" onclick="showNotifications()">
+                        <span class="menu-icon">🔔</span>
+                        <span>消息通知</span>
+                        <span class="arrow">></span>
+                    </div>
+                    <div class="menu-item" onclick="showExchangeItems()">
+                        <span class="menu-icon">🔄</span>
+                        <span>我的换物</span>
+                        <span class="arrow">></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page" id="myPublishPage" style="display:none;">
+                <div class="page-header">
+                    <button class="back-btn" onclick="goToProfile()">返回</button>
+                    <h2 class="page-title">我的发布</h2>
+                </div>
+                <div class="items-grid" id="myPublishList"></div>
+            </div>
+
+            <div class="page" id="myFavoritesPage" style="display:none;">
+                <div class="page-header">
+                    <button class="back-btn" onclick="goToProfile()">返回</button>
+                    <h2 class="page-title">我的收藏</h2>
+                </div>
+                <div class="items-grid" id="myFavoritesList"></div>
+            </div>
+
+            <div class="page" id="notificationsPage" style="display:none;">
+                <div class="page-header">
+                    <button class="back-btn" onclick="goToProfile()">返回</button>
+                    <h2 class="page-title">消息通知</h2>
+                </div>
+                <div class="notifications-list" id="notificationsList"></div>
+            </div>
+
+            <div class="page" id="exchangePage" style="display:none;">
+                <div class="page-header">
+                    <button class="back-btn" onclick="goBack()">返回</button>
+                    <h2 class="page-title">换物专区</h2>
+                </div>
+                <div class="exchange-tabs">
+                    <span class="tab active" onclick="switchExchangeTab('my')">我想换出</span>
+                    <span class="tab" onclick="switchExchangeTab('want')">我想换入</span>
+                </div>
+                <div class="items-grid" id="exchangeItemsList"></div>
+            </div>
+        </main>
+
+        <nav class="bottom-nav" id="bottomNav">
+            <div class="nav-item active" onclick="goToHome()">
+                <span class="nav-icon">🏠</span>
+                <span>首页</span>
+            </div>
+            <div class="nav-item" onclick="goToExchange()">
+                <span class="nav-icon">🔄</span>
+                <span>换物</span>
+            </div>
+            <div class="nav-item publish-nav" onclick="goToPublish()">
+                <span class="nav-icon">+</span>
+                <span>发布</span>
+            </div>
+            <div class="nav-item" onclick="goToProfile()">
+                <span class="nav-icon">👤</span>
+                <span>我的</span>
+            </div>
+        </nav>
+
+        <div class="modal" id="searchModal" style="display:none;">
+            <div class="modal-content search-modal">
+                <div class="search-header">
+                    <input type="text" id="searchInput" placeholder="搜索闲置物品...">
+                    <button onclick="doSearch()">搜索</button>
+                    <button onclick="closeSearch()">取消</button>
+                </div>
+                <div class="search-history">
+                    <h4>搜索历史</h4>
+                    <div class="history-tags">
+                        <span class="tag">高等数学</span>
+                        <span class="tag">自行车</span>
+                        <span class="tag">耳机</span>
+                    </div>
+                </div>
+                <div class="search-hot">
+                    <h4>热门搜索</h4>
+                    <div class="hot-tags">
+                        <span class="tag">考研资料</span>
+                        <span class="tag">台灯</span>
+                        <span class="tag">键盘</span>
+                        <span class="tag">篮球</span>
+                        <span class="tag">衣服</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="contactModal" style="display:none;">
+            <div class="modal-content contact-modal">
+                <h3>联系卖家</h3>
+                <div class="contact-info">
+                    <p>卖家：<span id="sellerName">校园用户</span></p>
+                    <p>年级：<span id="sellerGrade">大二</span></p>
+                    <p>宿舍：<span id="sellerDorm">5号楼301</span></p>
+                </div>
+                <div class="contact-actions">
+                    <button class="contact-btn message-btn" onclick="sendMessage()">发私信</button>
+                    <button class="contact-btn call-btn" onclick="makeCall()">打电话</button>
+                </div>
+                <button class="close-modal" onclick="closeContact()">关闭</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
